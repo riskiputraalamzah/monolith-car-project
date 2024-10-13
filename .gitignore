@@ -26,3 +26,4 @@ secret_key.txt
 build/
 dist/
 *.egg-info/
+.vercel
