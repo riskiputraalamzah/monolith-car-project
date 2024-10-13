@@ -19,20 +19,15 @@ Ikuti langkah-langkah di bawah ini untuk menyiapkan dan menjalankan aplikasi Fla
 Clone repository ke direktori lokal Anda. Gunakan perintah berikut:
 
 ```bash
-git clone <URL_REPOSITORY>
-```
-
-Gantilah `<URL_REPOSITORY>` dengan URL repository Anda.
+git clone https://github.com/riskiputraalamzah/monolith-car-project.git
 
 ### 2. Masuk ke Direktori Proyek
 
 Pindah ke direktori proyek yang baru saja Anda clone:
 
 ```bash
-cd <NAMA_FOLDER_PROYEK>
+cd monolith-car-project
 ```
-
-Gantilah `<NAMA_FOLDER_PROYEK>` dengan nama folder proyek Anda.
 
 ### 3. Membuat Virtual Environment
 
