@@ -1,5 +1,6 @@
 from peewee import *
 from flask import Flask, render_template, request, url_for, redirect
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -44,13 +45,6 @@ def createcarsave():
     fModel = request.form['carModel']
     fPrice = request.form['carPrice']
 
-    viewData = {
-        "name": fName,
-        "brand": fBrand,
-        "model": fModel,
-        "price": fPrice
-    }
-
     # simpan di DB
     car_simpan = TBCars.create(
         carname=fName,
@@ -75,19 +69,15 @@ def updatecar():
 @app.route('/updatecarsave', methods=['POST'])
 def updatecarsave():
     car_id = request.form['carId']
-
-    # Validasi apakah ID ada dalam database
     car = TBCars.get_or_none(TBCars.id == car_id)
     if not car:
         return render_template('updatecar.html', appType=appType, error="Car ID does not exist.")
 
-    # Ambil nilai lama dari database
     fName = request.form['carName'] or car.carname
     fBrand = request.form['carBrand'] or car.carbrand
     fModel = request.form['carModel'] or car.carmodel
     fPrice = request.form['carPrice'] or car.carprice
 
-    # Update mobil dengan nilai baru atau lama
     query = TBCars.update(
         carname=fName,
         carbrand=fBrand,
@@ -101,15 +91,12 @@ def updatecarsave():
 
 @app.route('/deletecar')
 def deletecar():
-
     return render_template('deletecar.html', appType=appType)
 
 
 @app.route('/deletecarsave', methods=['GET', 'POST'])
 def deletecarsave():
     car_id = request.form['carId']
-
-    # Validasi apakah ID ada dalam database
     car = TBCars.get_or_none(TBCars.id == car_id)
     if not car:
         return render_template('deletecar.html', appType=appType, error="Car ID does not exist.")
@@ -127,7 +114,6 @@ def searchcar():
 @app.route('/searchcarsave', methods=['POST'])
 def searchcarsave():
     search_query = request.form['searchQuery']
-    # Mencari data mobil berdasarkan nama, brand, model, atau harga
     results = TBCars.select().where(
         (TBCars.carname.contains(search_query)) |
         (TBCars.carbrand.contains(search_query)) |
@@ -140,6 +126,30 @@ def searchcarsave():
 @app.route('/help')
 def help():
     return "ini halaman Helps"
+
+# Route untuk mengupload file CSV
+
+
+@app.route('/uploadcsv', methods=['GET', 'POST'])
+def uploadcsv():
+    if request.method == 'POST':
+        file = request.files['csvFile']
+        if file and file.filename.endswith('.csv'):
+            # Membaca file CSV menggunakan pandas
+            df = pd.read_csv(file)
+
+            # Menyimpan setiap baris ke database
+            for index, row in df.iterrows():
+                # Menggunakan .get() untuk menghindari KeyError
+                TBCars.create(
+                    carname=row.get('name', None) or "null",
+                    carbrand=row.get('brand', None) or "null",
+                    carmodel=row.get('model', None) or "null",
+                    carprice=row.get('price', None) or "null"
+                )
+            return redirect(url_for('readcar'))
+
+    return render_template('uploadcsv.html', appType=appType)
 
 
 if __name__ == '__main__':
