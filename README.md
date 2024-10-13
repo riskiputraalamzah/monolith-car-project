@@ -20,6 +20,7 @@ Clone repository ke direktori lokal Anda. Gunakan perintah berikut:
 
 ```bash
 git clone https://github.com/riskiputraalamzah/monolith-car-project.git
+```
 
 ### 2. Masuk ke Direktori Proyek
 
